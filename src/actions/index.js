@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Define the API endpoint
-const apiUrl = 'http://52.168.1.54:8080/api/v1/userActivities';
+const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8080/api/v1/userActivities';
 
 export const setFilter = (filter) => ({
   type: 'SET_FILTER',
