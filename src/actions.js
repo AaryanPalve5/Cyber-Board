@@ -9,8 +9,9 @@ export const FETCH_DATA_FAILURE = 'FETCH_DATA_FAILURE';
 export const fetchDataRequest = () => {
   return async dispatch => {
     dispatch({ type: FETCH_DATA_REQUEST });
-    try {
-      const response = await fetch(process.env.REACT_APP_API_URL); // Ensure this URL uses HTTPS
+      try {  
+        const response = await fetch('https://api.allorigins.win/raw?url=http://52.168.1.54:8080/api/v1/userActivities');
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
