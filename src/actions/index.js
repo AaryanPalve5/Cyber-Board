@@ -7,7 +7,7 @@ import { PieChart, Pie, Cell } from 'recharts';
 const { Option } = Select;
 const { Title } = Typography;
 
-const API_URL = 'http://52.168.1.54:8080/api/v1/userActivities';
+const API_URL = '/api/v1/userActivities';
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
