@@ -10,7 +10,7 @@ export const fetchDataRequest = () => {
   return async dispatch => {
     dispatch({ type: FETCH_DATA_REQUEST });
     try {
-      const response = await fetch('http://52.168.1.54:8080/api/v1/userActivities');
+      const response = await fetch(process.env.REACT_APP_API_URL); // Ensure this URL uses HTTPS
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
