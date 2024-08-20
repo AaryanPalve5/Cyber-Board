@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/reactdashboard/static/js/main.5d6d44d8.js",
+    "index.html": "/reactdashboard/index.html",
+    "main.5d6d44d8.js.map": "/reactdashboard/static/js/main.5d6d44d8.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.5d6d44d8.js"
+  ]
+}
