@@ -99,8 +99,13 @@ const Dashboard = () => {
           <Table
             dataSource={filteredData}
             columns={[
+              
+              { title: 'Id', dataIndex: 'id', key: 'id' },
               { title: 'User', dataIndex: 'user', key: 'user' },
               { title: 'Category', dataIndex: 'category', key: 'category' },
+              { title: 'Details', dataIndex: 'details', key: 'details' },
+              { title: 'TimeStamp', dataIndex: 'timeStamp', key: 'timeStamp' },
+              { title: 'IP Address', dataIndex: 'ipAddress', key: 'ipAddress' },
             ]}
             rowKey="id"
             style={{ maxWidth: '100%', overflowX: 'auto' }}
