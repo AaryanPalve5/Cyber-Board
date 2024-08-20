@@ -1,10 +1,8 @@
-// src/Dashboard.js
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Table, Select, Button, Typography, Row, Col } from 'antd';
-import { PieChart, Pie, Cell } from 'recharts';
-import { fetchDataRequest, setFilter } from './actions'; // Ensure fetchDataRequest is imported
+import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import { fetchDataRequest, setFilter } from './actions';
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -12,6 +10,7 @@ const { Title } = Typography;
 const Dashboard = () => {
   const dispatch = useDispatch();
   const { data, filter, error } = useSelector(state => state);
+  const [showTable, setShowTable] = useState(true);
 
   useEffect(() => {
     dispatch(fetchDataRequest());
@@ -40,11 +39,15 @@ const Dashboard = () => {
   const users = [...new Set(data.map(item => item.user))];
   const categories = [...new Set(data.map(item => item.category))];
 
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A0E0B8', '#D84A27'];
+
   return (
-    <div>
+    <div style={{ padding: '20px', maxWidth: '100%', boxSizing: 'border-box' }}>
       {error && <div style={{ color: 'red' }}>Error: {error}</div>}
-      <Row gutter={16}>
-        <Col span={8}>
+
+      {/* Filter Options */}
+      <Row gutter={[16, 16]}>
+        <Col xs={24} sm={12} md={8}>
           <Select
             placeholder="Select User"
             onChange={value => handleFilterChange('user', value)}
@@ -55,7 +58,7 @@ const Dashboard = () => {
             ))}
           </Select>
         </Col>
-        <Col span={8}>
+        <Col xs={24} sm={12} md={8}>
           <Select
             placeholder="Select Category"
             onChange={value => handleFilterChange('category', value)}
@@ -66,40 +69,59 @@ const Dashboard = () => {
             ))}
           </Select>
         </Col>
-        <Col span={8}>
-          <Button type="primary" onClick={() => dispatch(fetchDataRequest())}>
+        <Col xs={24} sm={24} md={8}>
+          <Button
+            type="primary"
+            onClick={() => dispatch(fetchDataRequest())}
+            style={{ width: '100%' }}
+          >
             Refresh Data
           </Button>
         </Col>
       </Row>
-      <Title level={2}>Dashboard</Title>
-      <Row gutter={16}>
-        <Col span={12}>
+
+      {/* Centered Toggle Button */}
+      <div style={{ textAlign: 'center', margin: '20px 0' }}>
+        <Button
+          type="primary"
+          onClick={() => setShowTable(!showTable)}
+        >
+          {showTable ? 'Show Pie Chart' : 'Show Table'}
+        </Button>
+      </div>
+
+      {/* Dashboard Title */}
+      <Title level={2} style={{ textAlign: 'center' }}>Dashboard</Title>
+
+      {/* Conditional Rendering of Table or Pie Chart */}
+      <div style={{ textAlign: 'center' }}>
+        {showTable ? (
           <Table
             dataSource={filteredData}
             columns={[
               { title: 'User', dataIndex: 'user', key: 'user' },
               { title: 'Category', dataIndex: 'category', key: 'category' },
-              // Add other columns as needed
             ]}
             rowKey="id"
+            style={{ maxWidth: '100%', overflowX: 'auto' }}
           />
-        </Col>
-        <Col span={12}>
-          <PieChart width={400} height={400}>
+        ) : (
+          <PieChart width={window.innerWidth < 768 ? 300 : 400} height={window.innerWidth < 768 ? 300 : 400}>
             <Pie
               data={pieData}
               dataKey="value"
-              outerRadius={150}
+              outerRadius={window.innerWidth < 768 ? 100 : 150}
               label
             >
               {pieData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#8884d8' : '#82ca9d'} />
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
+            <Tooltip />
+            <Legend />
           </PieChart>
-        </Col>
-      </Row>
+        )}
+      </div>
     </div>
   );
 };
