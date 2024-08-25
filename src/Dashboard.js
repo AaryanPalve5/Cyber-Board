@@ -10,7 +10,7 @@ const { Title } = Typography;
 const Dashboard = () => {
   const dispatch = useDispatch();
   const { data, filter, error } = useSelector(state => state);
-  const [showTable, setShowTable] = useState(true);
+  const [showTable, setShowTable] = useState(false); // Default to showing dashboard
 
   useEffect(() => {
     dispatch(fetchDataRequest());
@@ -39,22 +39,29 @@ const Dashboard = () => {
     return acc;
   }, []);
 
-  const groupedData = filteredData.reduce((acc, item) => {
-    const year = new Date(item.timeStamp).getFullYear();
-    const key = `${item.category}-${year}`;
-    if (!acc[key]) {
-      acc[key] = { category: item.category, year, count: 0 };
+  // Aggregate counts by category
+  const aggregatedData = filteredData.reduce((acc, item) => {
+    const existing = acc.find(entry => entry.category === item.category);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      acc.push({ category: item.category, count: 1 });
     }
-    acc[key].count += 1;
     return acc;
-  }, {});
+  }, []);
 
-  const barData = Object.values(groupedData);
+  const barData = aggregatedData;
 
   const users = [...new Set(data.map(item => item.user))];
   const categories = [...new Set(data.map(item => item.category))];
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A0E0B8', '#D84A27'];
+  const COLORS = {
+    Malware: '#0088FE',
+    Phishing: '#00C49F',
+    'Data Breach': '#FFBB28',
+    Ransomware: '#FF8042',
+    // Add more colors if needed
+  };
 
   return (
     <div style={{ padding: '20px', maxWidth: '100%', boxSizing: 'border-box' }}>
@@ -146,34 +153,48 @@ const Dashboard = () => {
                     label
                   >
                     {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell key={`cell-${index}`} fill={COLORS[entry.name] || '#8884d8'} />
                     ))}
                   </Pie>
                   <Tooltip />
-                  <Legend />
+                  <Legend
+                    layout="vertical"
+                    verticalAlign="middle"
+                    align="right"
+                    wrapperStyle={{ fontSize: '14px' }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </Col>
             <Col xs={24} md={12}>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={barData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="category" />
-                  <YAxis />
-                  <Tooltip />
+                <BarChart data={barData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="6 6" />
+                  <XAxis
+                    dataKey="category"
+                    angle={-30}
+                    textAnchor="end"
+                    height={60}
+                    style={{ fontSize: '12px' }}
+                  />
+                  <YAxis
+                    label={{ value: 'Count', angle: -90, position: 'insideLeft', offset: 0 }}
+                    style={{ fontSize: '12px' }}
+                  />
+                  <Tooltip formatter={(value) => `${value}`} />
                   <Legend />
-                  <Bar dataKey="count">
-  {barData.map((entry, index) => {
-    let color = '#0088FE'; // default color
-    if (entry.category === 'Malware') color = '#0088FE'; // blue
-    if (entry.category === 'Phishing') color = '#00C49F'; // green
-    if (entry.category === 'Data Breach') color = '#FFBB28'; // yellow
-    if (entry.category === 'Ransomware') color = '#FF8042';
-
-    return <Cell key={`cell-${index}`} fill={color} />;
-  })}
-</Bar>
-
+                  <Bar
+                    dataKey="count"
+                    label={({ x, y, width, value }) => (
+                      <text x={x + width / 2} y={y - 10} dy={-4} textAnchor="middle" fill="#333">
+                        {value}
+                      </text>
+                    )}
+                  >
+                    {barData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[entry.category] || '#8884d8'} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </Col>
