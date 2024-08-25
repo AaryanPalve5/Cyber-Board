@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Table, Select, Button, Typography, Row, Col } from 'antd';
-import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { fetchDataRequest, setFilter } from './actions';
 
 const { Option } = Select;
@@ -39,6 +39,18 @@ const Dashboard = () => {
     return acc;
   }, []);
 
+  const groupedData = filteredData.reduce((acc, item) => {
+    const year = new Date(item.timeStamp).getFullYear();
+    const key = `${item.category}-${year}`;
+    if (!acc[key]) {
+      acc[key] = { category: item.category, year, count: 0 };
+    }
+    acc[key].count += 1;
+    return acc;
+  }, {});
+
+  const barData = Object.values(groupedData);
+
   const users = [...new Set(data.map(item => item.user))];
   const categories = [...new Set(data.map(item => item.category))];
 
@@ -52,12 +64,11 @@ const Dashboard = () => {
         Cyber Board
       </Title>
 
-      {/* Filter Options */}
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} md={8}>
           <Select
             placeholder="Select User"
-            value={filter.user || undefined} // Reset to undefined when no filter
+            value={filter.user || undefined}
             onChange={value => handleFilterChange('user', value)}
             style={{ width: '100%' }}
           >
@@ -69,7 +80,7 @@ const Dashboard = () => {
         <Col xs={24} sm={12} md={8}>
           <Select
             placeholder="Select Category"
-            value={filter.category || undefined} // Reset to undefined when no filter
+            value={filter.category || undefined}
             onChange={value => handleFilterChange('category', value)}
             style={{ width: '100%' }}
           >
@@ -98,37 +109,18 @@ const Dashboard = () => {
         </Col>
       </Row>
 
-      {/* Centered Toggle Button */}
       <div style={{ textAlign: 'center', margin: '20px 0' }}>
         <Button
           type="primary"
           onClick={() => setShowTable(!showTable)}
           style={{ padding: '25px' }}
         >
-          {showTable ? 'Show Table' : 'Show Pie Chart'}
+          {showTable ? 'Show Dashboard' : 'Show Table'}
         </Button>
       </div>
 
-      {/* Conditional Rendering of Pie Chart or Table */}
       <div style={{ textAlign: 'center', padding: '5px' }}>
         {showTable ? (
-          <div style={{ marginTop: '20px' }}>
-            <PieChart width={window.innerWidth < 768 ? 300 : 500} height={window.innerWidth < 768 ? 300 : 500}>
-              <Pie
-                data={pieData}
-                dataKey="value"
-                outerRadius={window.innerWidth < 768 ? 100 : 200}
-                label
-              >
-                {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </div>
-        ) : (
           <Table
             dataSource={filteredData}
             columns={[
@@ -142,6 +134,50 @@ const Dashboard = () => {
             rowKey="id"
             style={{ maxWidth: '100%', overflowX: 'auto' }}
           />
+        ) : (
+          <Row gutter={[16, 16]} justify="center">
+            <Col xs={24} md={12}>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    dataKey="value"
+                    outerRadius={100}
+                    label
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </Col>
+            <Col xs={24} md={12}>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={barData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="category" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="count">
+  {barData.map((entry, index) => {
+    let color = '#0088FE'; // default color
+    if (entry.category === 'Malware') color = '#0088FE'; // blue
+    if (entry.category === 'Phishing') color = '#00C49F'; // green
+    if (entry.category === 'Data Breach') color = '#FFBB28'; // yellow
+    if (entry.category === 'Ransomware') color = '#FF8042';
+
+    return <Cell key={`cell-${index}`} fill={color} />;
+  })}
+</Bar>
+
+                </BarChart>
+              </ResponsiveContainer>
+            </Col>
+          </Row>
         )}
       </div>
     </div>
