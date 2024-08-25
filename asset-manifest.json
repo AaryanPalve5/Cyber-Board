@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/reactdashboard/static/js/main.40392f93.js",
+    "main.js": "/reactdashboard/static/js/main.c25494aa.js",
     "index.html": "/reactdashboard/index.html",
-    "main.40392f93.js.map": "/reactdashboard/static/js/main.40392f93.js.map"
+    "main.c25494aa.js.map": "/reactdashboard/static/js/main.c25494aa.js.map"
   },
   "entrypoints": [
-    "static/js/main.40392f93.js"
+    "static/js/main.c25494aa.js"
   ]
 }
