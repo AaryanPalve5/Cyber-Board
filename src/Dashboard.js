@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Table, Select, Button, Typography, Row, Col } from 'antd';
-import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { fetchDataRequest, setFilter } from './actions';
 
 const { Option } = Select;
@@ -10,7 +10,7 @@ const { Title } = Typography;
 const Dashboard = () => {
   const dispatch = useDispatch();
   const { data, filter, error } = useSelector(state => state);
-  const [showTable, setShowTable] = useState(false); // Default to showing dashboard
+  const [showTable, setShowTable] = useState(false);
 
   useEffect(() => {
     dispatch(fetchDataRequest());
@@ -39,7 +39,6 @@ const Dashboard = () => {
     return acc;
   }, []);
 
-  // Aggregate counts by category
   const aggregatedData = filteredData.reduce((acc, item) => {
     const existing = acc.find(entry => entry.category === item.category);
     if (existing) {
@@ -62,6 +61,18 @@ const Dashboard = () => {
     Ransomware: '#FF8042',
     // Add more colors if needed
   };
+
+  // Aggregating data by year
+  const lineChartData = filteredData.reduce((acc, item) => {
+    const year = new Date(item.timeStamp).getFullYear();
+    const existingYear = acc.find(entry => entry.year === year);
+    if (existingYear) {
+      existingYear[item.category] = (existingYear[item.category] || 0) + 1;
+    } else {
+      acc.push({ year, [item.category]: 1 });
+    }
+    return acc;
+  }, []).sort((a, b) => a.year - b.year);
 
   return (
     <div style={{ padding: '20px', maxWidth: '100%', boxSizing: 'border-box' }}>
@@ -196,6 +207,20 @@ const Dashboard = () => {
                     ))}
                   </Bar>
                 </BarChart>
+              </ResponsiveContainer>
+            </Col>
+            <Col xs={24}>
+              <ResponsiveContainer width="100%" height={400}>
+                <LineChart data={lineChartData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="6 6" />
+                  <XAxis dataKey="year" />
+                  <YAxis label={{ value: 'Cases', angle: -90, position: 'insideLeft', offset: 0 }} />
+                  <Tooltip />
+                  <Legend />
+                  {categories.map(category => (
+                    <Line key={category} type="monotone" dataKey={category} stroke={COLORS[category] || '#8884d8'} />
+                  ))}
+                </LineChart>
               </ResponsiveContainer>
             </Col>
           </Row>

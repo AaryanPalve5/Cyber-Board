@@ -183,7 +183,7 @@ const fallbackData =  [
   },
   {
       "id": 23,
-      "user": "Amy Davis",
+      "user": "Amy Dunne",
       "category": "Data Breach",
       "details": "Exposure of employee personal information",
       "timeStamp": "2022-11-13",
@@ -271,7 +271,7 @@ const fallbackData =  [
   },
   {
       "id": 34,
-      "user": "Amy White",
+      "user": "James White",
       "category": "Phishing",
       "details": "Email pretending to be from a trusted source",
       "timeStamp": "2023-11-25",
@@ -407,7 +407,7 @@ const fallbackData =  [
   },
   {
       "id": 51,
-      "user": "Amy Richardson",
+      "user": "Jack Richardson",
       "category": "Data Breach",
       "details": "Leak of internal documents",
       "timeStamp": "2024-07-20",
