@@ -6,7 +6,6 @@ import { fetchDataRequest, setFilter } from './actions';
 
 const { Option } = Select;
 const { Title } = Typography;
-
 const Dashboard = () => {
   const dispatch = useDispatch();
   const { data, filter, error } = useSelector(state => state);
@@ -62,7 +61,6 @@ const Dashboard = () => {
     // Add more colors if needed
   };
 
-  // Aggregating data by year
   const lineChartData = filteredData.reduce((acc, item) => {
     const year = new Date(item.timeStamp).getFullYear();
     const existingYear = acc.find(entry => entry.year === year);
@@ -75,14 +73,21 @@ const Dashboard = () => {
   }, []).sort((a, b) => a.year - b.year);
 
   return (
-    <div style={{ padding: '20px', maxWidth: '100%', boxSizing: 'border-box' }}>
+    <div style={{ padding: '10px', maxWidth: '100%', boxSizing: 'border-box' }}>
       {error && <div style={{ color: 'red', padding: '10px', textAlign: 'center' }}>Error: {error}</div>}
-      
-      <Title level={2} style={{ textAlign: 'center', fontFamily: 'Roboto, sans-serif', padding: '20px' }}>
-        Cyber Board
-      </Title>
+      <Title
+  level={3}
+  style={{
+    textAlign: 'center',
+    fontFamily: 'Roboto, sans-serif',
+    
+    fontSize: '34px', // Adjust this value to make the title larger
+  }}
+>
+  Cyber Board
+</Title>
 
-      <Row gutter={[16, 16]}>
+      <Row gutter={[8, 8]}>
         <Col xs={24} sm={12} md={8}>
           <Select
             placeholder="Select User"
@@ -112,14 +117,14 @@ const Dashboard = () => {
             <Button
               type="primary"
               onClick={() => dispatch(fetchDataRequest())}
-              style={{ flex: 1, marginRight: '10px', padding: '10px', backgroundColor: '#1890ff', borderColor: '#1890ff' }}
+              style={{ flex: 1, marginRight: '5px', padding: '8px', backgroundColor: '#1890ff', borderColor: '#1890ff' }}
             >
               Refresh Data
             </Button>
             <Button
               type="default"
               onClick={resetFilters}
-              style={{ flex: 1, padding: '10px' }}
+              style={{ flex: 1, padding: '8px' }}
             >
               Reset Filters
             </Button>
@@ -127,11 +132,11 @@ const Dashboard = () => {
         </Col>
       </Row>
 
-      <div style={{ textAlign: 'center', margin: '20px 0' }}>
+      <div style={{ textAlign: 'center', margin: '15px 0' }}>
         <Button
           type="primary"
           onClick={() => setShowTable(!showTable)}
-          style={{ padding: '25px' }}
+          style={{ padding: '20px' }}
         >
           {showTable ? 'Show Dashboard' : 'Show Table'}
         </Button>
@@ -151,16 +156,17 @@ const Dashboard = () => {
             ]}
             rowKey="id"
             style={{ maxWidth: '100%', overflowX: 'auto' }}
+            pagination={{ pageSize: 10 }} // Reducing number of rows per page to fit the screen
           />
         ) : (
-          <Row gutter={[16, 16]} justify="center">
+          <Row gutter={[8, 8]} justify="center">
             <Col xs={24} md={12}>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
                   <Pie
                     data={pieData}
                     dataKey="value"
-                    outerRadius={100}
+                    outerRadius={80}
                     label
                   >
                     {pieData.map((entry, index) => (
@@ -172,35 +178,31 @@ const Dashboard = () => {
                     layout="vertical"
                     verticalAlign="middle"
                     align="right"
-                    wrapperStyle={{ fontSize: '14px' }}
+                    wrapperStyle={{ fontSize: '15px' }}
                   />
                 </PieChart>
               </ResponsiveContainer>
             </Col>
             <Col xs={24} md={12}>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={barData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="6 6" />
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={barData} margin={{ top: 10, right: 15, left: 10, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
                     dataKey="category"
                     angle={-30}
                     textAnchor="end"
-                    height={60}
-                    style={{ fontSize: '12px' }}
+                    height={50}
+                    style={{ fontSize: '10px' }}
                   />
                   <YAxis
                     label={{ value: 'Count', angle: -90, position: 'insideLeft', offset: 0 }}
-                    style={{ fontSize: '12px' }}
+                    style={{ fontSize: '10px' }}
                   />
                   <Tooltip formatter={(value) => `${value}`} />
                   <Legend />
                   <Bar
                     dataKey="count"
-                    label={({ x, y, width, value }) => (
-                      <text x={x + width / 2} y={y - 10} dy={-4} textAnchor="middle" fill="#333">
-                        {value}
-                      </text>
-                    )}
+                   
                   >
                     {barData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[entry.category] || '#8884d8'} />
@@ -210,9 +212,9 @@ const Dashboard = () => {
               </ResponsiveContainer>
             </Col>
             <Col xs={24}>
-              <ResponsiveContainer width="100%" height={400}>
-                <LineChart data={lineChartData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="6 6" />
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={lineChartData} margin={{ top: 10, right: 15, left: 10, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="year" />
                   <YAxis label={{ value: 'Cases', angle: -90, position: 'insideLeft', offset: 0 }} />
                   <Tooltip />
