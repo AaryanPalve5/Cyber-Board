@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.js": "/reactdashboard/static/js/main.53c0be64.js",
-    "index.html": "/reactdashboard/index.html",
-    "main.53c0be64.js.map": "/reactdashboard/static/js/main.53c0be64.js.map"
+    "main.js": "/Cyber-Board/static/js/main.53c0be64.js",
+    "index.html": "/Cyber-Board/index.html",
+    "main.53c0be64.js.map": "/Cyber-Board/static/js/main.53c0be64.js.map"
   },
   "entrypoints": [
     "static/js/main.53c0be64.js"
