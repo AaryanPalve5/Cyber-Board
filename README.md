@@ -4,7 +4,7 @@
 
 This is a React application that dynamically toggles between a dashboard and table content. The dashboard provides a variety of visualizations, including bar charts, pie charts, and line graphs, focused on cybersecurity data. The app fetches data via an API with a proxy setup and uses manual data as a fallback to ensure seamless operation.
 
-You can view the app live [here](https://aaryanpalve5.github.io/reactdashboard/).
+You can view the app live [here](https://aaryanpalve5.github.io/Cyber-Board/).
 
 ## Features
 
